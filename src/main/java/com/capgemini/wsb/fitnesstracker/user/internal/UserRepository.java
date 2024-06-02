@@ -4,8 +4,11 @@ import com.capgemini.wsb.fitnesstracker.user.api.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 interface UserRepository extends JpaRepository<User, Long> {
 
@@ -20,5 +23,19 @@ interface UserRepository extends JpaRepository<User, Long> {
                         .filter(user -> Objects.equals(user.getEmail(), email))
                         .findFirst();
     }
+
+    /**
+     * Query searching users by birthdate. It matches users born after the specified date.
+     *
+     * @param date the date to compare against
+     * @return {@link List} of users born after the specified date
+     */
+    default List<User> findUsersByBirthDateAfter(LocalDate date) {
+        return findAll().stream()
+                .filter(user -> user.getBirthdate().isAfter(date))
+                .collect(Collectors.toList());
+    }
+
+
 
 }
